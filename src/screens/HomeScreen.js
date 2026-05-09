@@ -1,9 +1,11 @@
 // src/screens/HomeScreen.js
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  View, Text, FlatList, Image, TouchableOpacity,
-  StyleSheet, ActivityIndicator, RefreshControl, TextInput, SafeAreaView, StatusBar,
+  View, Text, FlatList, TouchableOpacity,
+  StyleSheet, ActivityIndicator, RefreshControl, TextInput, StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { fetchProducts } from '../api';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -21,7 +23,7 @@ function Header({ navigation, searchQuery, setSearchQuery, onOpenDrawer }) {
         <TouchableOpacity onPress={onOpenDrawer} style={styles.hamburger}>
           <Text style={styles.hamburgerIcon}>☰</Text>
         </TouchableOpacity>
-        <Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" />
+        <Image source={{ uri: LOGO_URL }} style={styles.logo} contentFit="contain" />
         <View style={styles.headerIcons}>
           <TouchableOpacity onPress={() => navigation.navigate('WishlistTab')} style={styles.iconBtn}>
             <Text style={styles.iconText}>♡</Text>

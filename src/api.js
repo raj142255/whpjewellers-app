@@ -137,24 +137,35 @@ export async function fetchProductsByCollection(handle) {
   return collection.products.edges.map(e => e.node);
 }
 
+
 export async function fetchMenu() {
-  const data = await shopifyQuery(
-    `query {
-      menus(first: 1, query: "handle:main-menu") {
-        nodes {
-          id title handle
+  const query = `
+    query {
+      menu(id: "gid://shopify/Menu/242874941578") {
+        items {
+          id
+          title
+          url
           items {
-            id title url
+            id
+            title
+            url
             items {
-              id title url
-              items {
-                id title url
-              }
+              id
+              title
+              url
             }
           }
         }
       }
-    }`
-  );
-  return data.menus.nodes[0]?.items || [];
+    }
+  `;
+
+  try {
+    const data = await shopifyQuery(query);
+    return data?.menu?.items || [];
+  } catch (error) {
+    console.error("Shopify Menu Fetch Error:", error);
+    return []; // This will trigger your FALLBACK in DrawerMenu.js
+  }
 }

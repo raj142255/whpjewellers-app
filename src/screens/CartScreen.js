@@ -1,9 +1,11 @@
 // src/screens/CartScreen.js
 import React, { useState } from 'react';
 import {
-  View, Text, FlatList, Image, TouchableOpacity,
-  StyleSheet, Alert, Modal, SafeAreaView,
+  View, Text, FlatList, TouchableOpacity,
+  StyleSheet, Alert, Modal,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { WebView } from 'react-native-webview';
 import { useCart } from '../context/CartContext';
 import { createCheckout } from '../api';

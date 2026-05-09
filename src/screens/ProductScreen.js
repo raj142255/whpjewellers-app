@@ -1,9 +1,10 @@
 // src/screens/ProductScreen.js
 import React, { useEffect, useState } from 'react';
 import {
-  View, Text, ScrollView, Image, TouchableOpacity,
+  View, Text, ScrollView, TouchableOpacity,
   StyleSheet, ActivityIndicator, Alert, FlatList,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { fetchProduct } from '../api';
 import { useCart } from '../context/CartContext';
 
