@@ -23,7 +23,7 @@ function Header({ navigation, searchQuery, setSearchQuery, onOpenDrawer }) {
         <TouchableOpacity onPress={onOpenDrawer} style={styles.hamburger}>
           <Text style={styles.hamburgerIcon}>☰</Text>
         </TouchableOpacity>
-        <Image source={{ uri: LOGO_URL }} style={styles.logo} contentFit="contain" />
+        <Image source={{ uri: LOGO_URL }} style={styles.logo} r="contain" />
         <View style={styles.headerIcons}>
           <TouchableOpacity onPress={() => navigation.navigate('WishlistTab')} style={styles.iconBtn}>
             <Text style={styles.iconText}>♡</Text>

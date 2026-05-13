@@ -99,7 +99,11 @@ export async function createCheckout(lineItems) {
     .join(', ');
   const data = await shopifyQuery(
     `mutation {
-      draftOrderCreate(input: { lineItems: [${itemsGql}] }) {
+      draftOrderCreate(input: { 
+        lineItems: [${itemsGql}],
+        note: "Source: WHP Mobile App",
+        tags: ["source-app"]
+      }) {
         draftOrder { id invoiceUrl }
         userErrors { message }
       }

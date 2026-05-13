@@ -12,7 +12,7 @@ export default function WishlistScreen({ navigation }) {
     <View style={styles.empty}>
       <Text style={styles.emptyIcon}>♡</Text>
       <Text style={styles.emptyText}>Your wishlist is empty</Text>
-      <TouchableOpacity onPress={() => navigation.navigate('Shop')} style={styles.shopBtn}>
+      <TouchableOpacity onPress={() => navigation.navigate('ShopTab')} style={styles.shopBtn}>
         <Text style={styles.shopBtnText}>Browse jewellery</Text>
       </TouchableOpacity>
     </View>

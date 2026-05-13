@@ -1,5 +1,5 @@
 // src/screens/CartScreen.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity,
   StyleSheet, Alert, Modal,
@@ -7,6 +7,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { WebView } from 'react-native-webview';
+import { useRoute } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
 import { createCheckout } from '../api';
 
@@ -14,6 +15,13 @@ export default function CartScreen() {
   const { items, removeItem, updateQty, total } = useCart();
   const [checkoutUrl, setCheckoutUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const route = useRoute();
+
+  useEffect(() => {
+    if (route.params?.directCheckout) {
+      setCheckoutUrl(route.params.directCheckout);
+    }
+  }, [route.params?.directCheckout]);
 
   async function handleCheckout() {
     if (!items.length) return;
@@ -29,7 +37,7 @@ export default function CartScreen() {
     }
   }
 
-  if (!items.length) return (
+  if (!items.length && !checkoutUrl) return (
     <View style={styles.empty}>
       <Text style={styles.emptyIcon}>🛍️</Text>
       <Text style={styles.emptyText}>Your cart is empty</Text>
@@ -44,7 +52,7 @@ export default function CartScreen() {
         contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => (
           <View style={styles.row}>
-            {item.image && <Image source={{ uri: item.image }} style={styles.thumb} />}
+            {item.image && <Image source={{ uri: item.image }} style={styles.thumb} contentFit="cover" />}
             <View style={styles.info}>
               <Text style={styles.name} numberOfLines={2}>{item.title}</Text>
               {item.variantTitle !== 'Default Title' && (

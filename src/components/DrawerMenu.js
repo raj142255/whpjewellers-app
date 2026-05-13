@@ -4,11 +4,11 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Modal, // 1. Ensure this is explicitly here
+  Modal,
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { Image as ExpoImage } from 'expo-image'; // Renamed to avoid any 'Image' conflicts
+import { Image as ExpoImage } from 'expo-image';
 import { fetchMenu } from '../api';
 
 const LOGO_URL = 'https://cdn.shopify.com/s/files/1/0714/0419/1917/files/WHP_LOGO_9_10_25_2_brand_color_1.png?v=1765269037';
@@ -23,7 +23,6 @@ export default function DrawerMenu({ visible, onClose, onSelectCategory }) {
       setLoading(true);
       fetchMenu()
         .then(items => {
-           console.log("Fetched Menu Items:", items.length);
            setMenuItems(items);
         })
         .catch(err => console.error("Menu fetch error:", err))
@@ -46,21 +45,11 @@ export default function DrawerMenu({ visible, onClose, onSelectCategory }) {
   };
 
   return (
-    // 2. Using Modal as a top-level component
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent={true} animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.drawer}>
           <View style={styles.drawerHeader}>
-            <ExpoImage 
-              source={{ uri: LOGO_URL }} 
-              style={styles.logo} 
-              contentFit="contain" 
-            />
+            <ExpoImage source={{ uri: LOGO_URL }} style={styles.logo} contentFit="contain" />
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
               <Text style={styles.closeText}>✕</Text>
             </TouchableOpacity>
@@ -68,31 +57,48 @@ export default function DrawerMenu({ visible, onClose, onSelectCategory }) {
           
           <Text style={styles.menuTitle}>CATEGORIES</Text>
           
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {loading ? (
               <ActivityIndicator style={{ margin: 24 }} color="#8B6914" size="large" />
             ) : (
               menuItems.map((item) => (
                 <View key={item.id}>
-                  <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => handlePress(item)}
-                  >
+                  {/* LEVEL 1 */}
+                  <TouchableOpacity style={styles.menuItem} onPress={() => handlePress(item)}>
                     <Text style={styles.menuItemText}>{item.title}</Text>
                     {item.items?.length > 0 && (
                       <Text style={styles.arrow}>{expandedItems[item.id] ? '−' : '+'}</Text>
                     )}
                   </TouchableOpacity>
 
-                  {/* Level 2 Sub-items */}
+                  {/* LEVEL 2 */}
                   {expandedItems[item.id] && item.items?.map(subItem => (
-                    <TouchableOpacity
-                      key={subItem.id}
-                      style={styles.subMenuItem}
-                      onPress={() => handlePress(subItem)}
-                    >
-                      <Text style={styles.subMenuItemText}>{subItem.title}</Text>
-                    </TouchableOpacity>
+                    <View key={subItem.id}>
+                      <TouchableOpacity
+                        style={styles.subMenuItem}
+                        onPress={() => handlePress(subItem)}
+                      >
+                        <Text style={styles.subMenuItemText}>{subItem.title}</Text>
+                        {subItem.items?.length > 0 && (
+                          <Text style={styles.arrowSmall}>{expandedItems[subItem.id] ? '−' : '+'}</Text>
+                        )}
+                      </TouchableOpacity>
+
+                      {/* LEVEL 3 */}
+                      {expandedItems[subItem.id] && subItem.items?.map(deepItem => (
+                        <TouchableOpacity
+                          key={deepItem.id}
+                          style={styles.deepMenuItem}
+                          onPress={() => {
+                            const handle = deepItem.url?.split('/collections/')[1] || null;
+                            onSelectCategory({ label: deepItem.title, handle });
+                            onClose();
+                          }}
+                        >
+                          <Text style={styles.deepMenuItemText}>{deepItem.title}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
                   ))}
                 </View>
               ))
@@ -127,9 +133,16 @@ const styles = StyleSheet.create({
   },
   menuItemText: { fontSize: 16, color: '#222', fontWeight: '500' },
   subMenuItem: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 35, paddingVertical: 12,
     backgroundColor: '#fafafa', borderBottomWidth: 1, borderBottomColor: '#eee',
   },
-  subMenuItemText: { fontSize: 14, color: '#555' },
+  subMenuItemText: { fontSize: 14, color: '#444' },
+  deepMenuItem: {
+    paddingHorizontal: 50, paddingVertical: 10,
+    backgroundColor: '#ffffff', borderBottomWidth: 1, borderBottomColor: '#f9f9f9',
+  },
+  deepMenuItemText: { fontSize: 13, color: '#888' },
   arrow: { fontSize: 18, color: '#8B6914' },
+  arrowSmall: { fontSize: 14, color: '#8B6914' },
 });
